@@ -29,3 +29,26 @@ function create_user($conn, $name, $email, $password_hash, $phone, $role, $compa
 
     return mysqli_stmt_execute($stmt);
 }
+
+function count_all_users($conn) {
+    $sql = "SELECT COUNT(*) AS total FROM users";
+    $result = mysqli_query($conn, $sql);
+    return mysqli_fetch_assoc($result)["total"];
+}
+
+function count_users_by_role($conn, $role) {
+    $sql = "SELECT COUNT(*) AS total FROM users WHERE role = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return 0;
+    }
+
+    mysqli_stmt_bind_param($stmt, "s", $role);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($result);
+
+    return $row["total"];
+}
