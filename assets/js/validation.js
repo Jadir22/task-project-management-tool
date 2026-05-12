@@ -199,3 +199,79 @@ if (projectForm) {
         }
     });
 }
+
+var taskForm = document.getElementById("taskForm");
+
+if (taskForm) {
+    taskForm.addEventListener("submit", function (e) {
+        var isValid = true;
+
+        var project = document.getElementById("task_project").value;
+        var title = document.getElementById("task_title").value.trim();
+        var description = document.getElementById("task_description").value.trim();
+        var assignedTo = document.getElementById("task_assigned_to").value;
+        var priority = document.getElementById("task_priority").value;
+        var status = document.getElementById("task_status").value;
+        var dueDate = document.getElementById("task_due_date").value.trim();
+        var estimatedHours = document.getElementById("task_estimated_hours").value.trim();
+
+        document.getElementById("taskProjectError").innerText = "";
+        document.getElementById("taskTitleError").innerText = "";
+        document.getElementById("taskDescriptionError").innerText = "";
+        document.getElementById("taskAssignedError").innerText = "";
+        document.getElementById("taskPriorityError").innerText = "";
+        document.getElementById("taskStatusError").innerText = "";
+        document.getElementById("taskDueDateError").innerText = "";
+        document.getElementById("taskEstimatedHoursError").innerText = "";
+
+        if (project === "") {
+            document.getElementById("taskProjectError").innerText = "Project is required.";
+            isValid = false;
+        }
+
+        if (title === "") {
+            document.getElementById("taskTitleError").innerText = "Task title is required.";
+            isValid = false;
+        }
+
+        if (description === "") {
+            document.getElementById("taskDescriptionError").innerText = "Task description is required.";
+            isValid = false;
+        }
+
+        if (assignedTo === "") {
+            document.getElementById("taskAssignedError").innerText = "Assigned member is required.";
+            isValid = false;
+        }
+
+        if (priority === "") {
+            document.getElementById("taskPriorityError").innerText = "Priority is required.";
+            isValid = false;
+        }
+
+        if (status === "") {
+            document.getElementById("taskStatusError").innerText = "Status is required.";
+            isValid = false;
+        }
+
+        if (dueDate === "") {
+            document.getElementById("taskDueDateError").innerText = "Due date is required.";
+            isValid = false;
+        } else if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
+            document.getElementById("taskDueDateError").innerText = "Due date format must be YYYY-MM-DD.";
+            isValid = false;
+        }
+
+        if (estimatedHours === "") {
+            document.getElementById("taskEstimatedHoursError").innerText = "Estimated hours is required.";
+            isValid = false;
+        } else if (isNaN(estimatedHours) || Number(estimatedHours) <= 0) {
+            document.getElementById("taskEstimatedHoursError").innerText = "Estimated hours must be a positive number.";
+            isValid = false;
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+}
