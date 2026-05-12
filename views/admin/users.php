@@ -15,10 +15,12 @@ $users = get_all_users($conn, $search);
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Manage Users</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
 
     <h1>Manage Users</h1>
@@ -50,30 +52,30 @@ $users = get_all_users($conn, $search);
 
     <h2>Search Users</h2>
 
-    <form method="GET" action="users.php">
-        <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search by name, email, phone or role">
-        <button type="submit">Search</button>
-        <a href="users.php">Reset</a>
-    </form>
+    <div>
+        <input type="text" id="adminUserSearch" placeholder="Search by name, email, phone, company or role">
+        <small id="adminUserSearchMessage"></small>
+    </div>
 
     <hr>
 
     <h2>User List</h2>
 
     <table border="1" cellpadding="10">
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Company</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Created At</th>
-            <th>Change Status</th>
-            <th>Change Role</th>
-        </tr>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Company</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Created At</th>
+        <th>Change Status</th>
+        <th>Change Role</th>
+    </tr>
 
+        <tbody id="adminUsersTableBody">
         <?php if ($users && mysqli_num_rows($users) > 0): ?>
             <?php while ($user = mysqli_fetch_assoc($users)): ?>
                 <tr>
@@ -130,7 +132,11 @@ $users = get_all_users($conn, $search);
                 <td colspan="10">No users found.</td>
             </tr>
         <?php endif; ?>
-    </table>
+    </tbody>
+</table>
+
+<script src="../../assets/js/ajax.js"></script>
 
 </body>
+
 </html>

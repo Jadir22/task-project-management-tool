@@ -137,3 +137,36 @@ function update_user_role($conn, $user_id, $role) {
 
     return mysqli_stmt_execute($stmt);
 }
+
+function search_users_for_admin($conn, $search) {
+    $search_param = "%" . $search . "%";
+
+    $sql = "SELECT id, name, email, phone, company_name, role, is_active, created_at
+            FROM users
+            WHERE name LIKE ?
+            OR email LIKE ?
+            OR phone LIKE ?
+            OR role LIKE ?
+            OR company_name LIKE ?
+            ORDER BY created_at DESC";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param(
+        $stmt,
+        "sssss",
+        $search_param,
+        $search_param,
+        $search_param,
+        $search_param,
+        $search_param
+    );
+
+    mysqli_stmt_execute($stmt);
+
+    return mysqli_stmt_get_result($stmt);
+}
