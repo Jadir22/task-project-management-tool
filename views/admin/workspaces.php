@@ -106,7 +106,7 @@ $workspaces = get_all_workspaces_admin($conn, $search);
                     </td>
 
                     <td>
-                        <form action="../../controllers/admin_workspace_controller.php" method="POST">
+                        <form class="admin-workspace-status-form" action="../../controllers/admin_workspace_controller.php" method="POST">
                             <input type="hidden" name="action" value="change_workspace_status">
                             <input type="hidden" name="workspace_id" value="<?php echo $workspace["id"]; ?>">
 
@@ -120,7 +120,7 @@ $workspaces = get_all_workspaces_admin($conn, $search);
                     </td>
 
                     <td>
-                        <form action="../../controllers/admin_workspace_controller.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this workspace?');">
+                        <form class="admin-workspace-delete-form" action="../../controllers/admin_workspace_controller.php" method="POST">
                             <input type="hidden" name="action" value="delete_workspace">
                             <input type="hidden" name="workspace_id" value="<?php echo $workspace["id"]; ?>">
                             <button type="submit">Delete</button>
@@ -134,6 +134,7 @@ $workspaces = get_all_workspaces_admin($conn, $search);
             </tr>
         <?php endif; ?>
     </table>
+<script src="../../assets/js/validation.js"></script>
 
 </body>
 </html>

@@ -89,7 +89,7 @@ $members = get_workspace_members_admin($conn, $workspace_id);
                     <td><?php echo htmlspecialchars($member["workspace_role"]); ?></td>
                     <td><?php echo $member["joined_at"]; ?></td>
                     <td>
-                        <form action="../../controllers/admin_workspace_controller.php" method="POST" onsubmit="return confirm('Remove this member from workspace?');">
+                        <form class="admin-workspace-member-remove-form" action="../../controllers/admin_workspace_controller.php" method="POST">
                             <input type="hidden" name="action" value="remove_workspace_member">
                             <input type="hidden" name="workspace_member_id" value="<?php echo $member["id"]; ?>">
                             <input type="hidden" name="workspace_id" value="<?php echo $workspace_id; ?>">
@@ -104,6 +104,7 @@ $members = get_workspace_members_admin($conn, $workspace_id);
             </tr>
         <?php endif; ?>
     </table>
+<script src="../../assets/js/validation.js"></script>
 
 </body>
 </html>
