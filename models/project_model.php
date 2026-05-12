@@ -167,3 +167,51 @@ function get_project_member_by_id_and_teamlead($conn, $project_member_id, $team_
     $result = mysqli_stmt_get_result($stmt);
     return mysqli_fetch_assoc($result);
 }
+
+function get_all_projects_admin($conn, $workspace_id = "", $status = "", $client_id = "") {
+    $sql = "SELECT 
+                p.*,
+                w.name AS workspace_name,
+                u.name AS client_name
+            FROM projects p
+            LEFT JOIN workspaces w ON p.workspace_id = w.id
+            LEFT JOIN users u ON p.client_id = u.id
+            WHERE 1";
+
+    $types = "";
+    $params = [];
+
+    if ($workspace_id != "") {
+        $sql .= " AND p.workspace_id = ?";
+        $types .= "i";
+        $params[] = $workspace_id;
+    }
+
+    if ($status != "") {
+        $sql .= " AND p.status = ?";
+        $types .= "s";
+        $params[] = $status;
+    }
+
+    if ($client_id != "") {
+        $sql .= " AND p.client_id = ?";
+        $types .= "i";
+        $params[] = $client_id;
+    }
+
+    $sql .= " ORDER BY p.created_at DESC";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    if (!empty($params)) {
+        mysqli_stmt_bind_param($stmt, $types, ...$params);
+    }
+
+    mysqli_stmt_execute($stmt);
+
+    return mysqli_stmt_get_result($stmt);
+}
