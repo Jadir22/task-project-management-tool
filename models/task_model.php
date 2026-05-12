@@ -134,3 +134,26 @@ function get_tasks_by_teamlead($conn, $team_lead_id) {
 
     return mysqli_stmt_get_result($stmt);
 }
+
+function update_task_status_by_teamlead($conn, $task_id, $status, $team_lead_id) {
+    $sql = "UPDATE tasks 
+            SET status = ?,
+                completed_at = CASE WHEN ? = 'done' THEN NOW() ELSE completed_at END
+            WHERE id = ?
+            AND project_id IN (
+                SELECT id FROM projects
+                WHERE workspace_id IN (
+                    SELECT id FROM workspaces WHERE owner_id = ?
+                )
+            )";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "ssii", $status, $status, $task_id, $team_lead_id);
+
+    return mysqli_stmt_execute($stmt);
+}
