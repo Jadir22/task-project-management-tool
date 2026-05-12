@@ -78,3 +78,59 @@ function count_teamlead_overdue_tasks($conn, $team_lead_id) {
 
     return $row["total"];
 }
+
+function create_task($conn, $project_id, $milestone_id, $title, $description, $assigned_to, $created_by, $priority, $status, $due_date, $estimated_hours) {
+    $sql = "INSERT INTO tasks 
+            (project_id, milestone_id, title, description, assigned_to, created_by, priority, status, due_date, estimated_hours)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param(
+        $stmt,
+        "iissiisssd",
+        $project_id,
+        $milestone_id,
+        $title,
+        $description,
+        $assigned_to,
+        $created_by,
+        $priority,
+        $status,
+        $due_date,
+        $estimated_hours
+    );
+
+    return mysqli_stmt_execute($stmt);
+}
+
+function get_tasks_by_teamlead($conn, $team_lead_id) {
+    $sql = "SELECT 
+                t.*,
+                p.name AS project_name,
+                u.name AS assigned_member,
+                m.title AS milestone_title
+            FROM tasks t
+            LEFT JOIN projects p ON t.project_id = p.id
+            LEFT JOIN users u ON t.assigned_to = u.id
+            LEFT JOIN milestones m ON t.milestone_id = m.id
+            WHERE p.workspace_id IN (
+                SELECT id FROM workspaces WHERE owner_id = ?
+            )
+            ORDER BY t.created_at DESC";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $team_lead_id);
+    mysqli_stmt_execute($stmt);
+
+    return mysqli_stmt_get_result($stmt);
+}
