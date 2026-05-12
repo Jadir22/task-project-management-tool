@@ -97,7 +97,7 @@ $users = get_all_users($conn, $search);
                     <td><?php echo $user["created_at"]; ?></td>
 
                     <td>
-                        <form action="../../controllers/admin_user_controller.php" method="POST">
+                        <form class="admin-user-status-form" action="../../controllers/admin_user_controller.php" method="POST">
                             <input type="hidden" name="action" value="change_status">
                             <input type="hidden" name="user_id" value="<?php echo $user["id"]; ?>">
 
@@ -111,7 +111,7 @@ $users = get_all_users($conn, $search);
                     </td>
 
                     <td>
-                        <form action="../../controllers/admin_user_controller.php" method="POST">
+                        <form class="admin-user-role-form" action="../../controllers/admin_user_controller.php" method="POST">
                             <input type="hidden" name="action" value="change_role">
                             <input type="hidden" name="user_id" value="<?php echo $user["id"]; ?>">
 
@@ -136,6 +136,7 @@ $users = get_all_users($conn, $search);
 </table>
 
 <script src="../../assets/js/ajax.js"></script>
+<script src="../../assets/js/validation.js"></script>
 
 </body>
 

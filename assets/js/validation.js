@@ -362,3 +362,129 @@ if (projectMemberForm) {
         }
     });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    var userStatusForms = document.querySelectorAll(".admin-user-status-form");
+
+    userStatusForms.forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+            var userId = form.querySelector("input[name='user_id']").value;
+            var status = form.querySelector("select[name='is_active']").value;
+
+            if (userId === "" || isNaN(userId)) {
+                alert("Invalid user selected.");
+                e.preventDefault();
+                return;
+            }
+
+            if (status !== "0" && status !== "1") {
+                alert("Please select a valid user status.");
+                e.preventDefault();
+                return;
+            }
+
+            var statusText = status === "1" ? "activate" : "deactivate";
+
+            if (!confirm("Are you sure you want to " + statusText + " this user?")) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    var userRoleForms = document.querySelectorAll(".admin-user-role-form");
+
+    userRoleForms.forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+            var userId = form.querySelector("input[name='user_id']").value;
+            var role = form.querySelector("select[name='role']").value;
+
+            var allowedRoles = ["member", "team_lead", "client", "admin"];
+
+            if (userId === "" || isNaN(userId)) {
+                alert("Invalid user selected.");
+                e.preventDefault();
+                return;
+            }
+
+            if (!allowedRoles.includes(role)) {
+                alert("Please select a valid role.");
+                e.preventDefault();
+                return;
+            }
+
+            if (!confirm("Are you sure you want to change this user's role to " + role + "?")) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    var workspaceStatusForms = document.querySelectorAll(".admin-workspace-status-form");
+
+    workspaceStatusForms.forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+            var workspaceId = form.querySelector("input[name='workspace_id']").value;
+            var status = form.querySelector("select[name='is_active']").value;
+
+            if (workspaceId === "" || isNaN(workspaceId)) {
+                alert("Invalid workspace selected.");
+                e.preventDefault();
+                return;
+            }
+
+            if (status !== "0" && status !== "1") {
+                alert("Please select a valid workspace status.");
+                e.preventDefault();
+                return;
+            }
+
+            var statusText = status === "1" ? "activate" : "deactivate";
+
+            if (!confirm("Are you sure you want to " + statusText + " this workspace?")) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    var workspaceDeleteForms = document.querySelectorAll(".admin-workspace-delete-form");
+
+    workspaceDeleteForms.forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+            var workspaceId = form.querySelector("input[name='workspace_id']").value;
+
+            if (workspaceId === "" || isNaN(workspaceId)) {
+                alert("Invalid workspace selected.");
+                e.preventDefault();
+                return;
+            }
+
+            if (!confirm("Are you sure you want to delete this workspace? This action cannot be undone.")) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    var workspaceMemberRemoveForms = document.querySelectorAll(".admin-workspace-member-remove-form");
+
+    workspaceMemberRemoveForms.forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+            var workspaceMemberId = form.querySelector("input[name='workspace_member_id']").value;
+            var workspaceId = form.querySelector("input[name='workspace_id']").value;
+
+            if (workspaceMemberId === "" || isNaN(workspaceMemberId)) {
+                alert("Invalid workspace member selected.");
+                e.preventDefault();
+                return;
+            }
+
+            if (workspaceId === "" || isNaN(workspaceId)) {
+                alert("Invalid workspace selected.");
+                e.preventDefault();
+                return;
+            }
+
+            if (!confirm("Are you sure you want to remove this member from the workspace?")) {
+                e.preventDefault();
+            }
+        });
+    });
+});
