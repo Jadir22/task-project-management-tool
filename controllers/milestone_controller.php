@@ -5,6 +5,7 @@ session_start();
 include "../config/db.php";
 include "../models/milestone_model.php";
 include "../models/project_model.php";
+include "../models/activity_model.php";
 
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] != "team_lead") {
     header("Location: ../views/auth/login.php");
@@ -69,6 +70,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         );
 
         if ($created) {
+            add_activity_log(
+                $conn,
+                null,
+                $project_id,
+                $_SESSION["user_id"],
+                "milestone_created",
+                "Milestone created: " . $title
+            );
+
             $_SESSION["success"] = "Milestone created successfully.";
             header("Location: ../views/team_lead/milestones.php");
             exit();
@@ -100,6 +110,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $updated = mark_milestone_completed($conn, $milestone_id);
 
         if ($updated) {
+            add_activity_log(
+                $conn,
+                null,
+                $milestone["project_id"],
+                $_SESSION["user_id"],
+                "milestone_completed",
+                "Milestone marked as completed: " . $milestone["title"]
+            );
+
             $_SESSION["success"] = "Milestone marked as completed.";
             header("Location: ../views/team_lead/milestones.php");
             exit();

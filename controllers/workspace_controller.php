@@ -4,6 +4,7 @@ session_start();
 
 include "../config/db.php";
 include "../models/workspace_model.php";
+include "../models/activity_model.php";
 
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] != "team_lead") {
     header("Location: ../views/auth/login.php");
@@ -48,10 +49,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($workspace_id) {
             add_workspace_member($conn, $workspace_id, $owner_id, "lead");
 
+            add_activity_log(
+                $conn,
+                $workspace_id,
+                null,
+                $owner_id,
+                "workspace_created",
+                "Workspace created: " . $name
+            );
+
             $_SESSION["success"] = "Workspace created successfully. Invite Code: " . $invite_code;
             header("Location: ../views/team_lead/workspaces.php");
             exit();
-        } else {
+        }
+        else {
             $_SESSION["errors"] = ["Failed to create workspace."];
             header("Location: ../views/team_lead/workspaces.php");
             exit();

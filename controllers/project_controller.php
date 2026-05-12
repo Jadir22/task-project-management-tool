@@ -5,6 +5,7 @@ session_start();
 include "../config/db.php";
 include "../models/project_model.php";
 include "../models/workspace_model.php";
+include "../models/activity_model.php";
 
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] != "team_lead") {
     header("Location: ../views/auth/login.php");
@@ -76,10 +77,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $created = create_project($conn, $workspace_id, $name, $description, $client_id, $deadline, $color_label, $status, $visibility);
 
         if ($created) {
+            add_activity_log(
+                $conn,
+                $workspace_id,
+                null,
+                $_SESSION["user_id"],
+                "project_created",
+                "Project created: " . $name
+            );
+
             $_SESSION["success"] = "Project created successfully.";
             header("Location: ../views/team_lead/projects.php");
             exit();
-        } else {
+        }
+        else {
             $_SESSION["errors"] = ["Failed to create project."];
             header("Location: ../views/team_lead/create_project.php");
             exit();

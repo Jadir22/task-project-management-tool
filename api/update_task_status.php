@@ -6,6 +6,7 @@ header("Content-Type: application/json");
 
 include "../config/db.php";
 include "../models/task_model.php";
+include "../models/activity_model.php";
 
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] != "team_lead") {
     echo json_encode([
@@ -49,12 +50,22 @@ $team_lead_id = $_SESSION["user_id"];
 $updated = update_task_status_by_teamlead($conn, $task_id, $status, $team_lead_id);
 
 if ($updated) {
+    add_activity_log(
+        $conn,
+        null,
+        null,
+        $_SESSION["user_id"],
+        "task_status_updated",
+        "Task ID " . $task_id . " status updated to " . $status
+    );
+
     echo json_encode([
         "success" => true,
         "message" => "Task status updated successfully."
     ]);
     exit();
-} else {
+}
+else {
     echo json_encode([
         "success" => false,
         "message" => "Failed to update task status."
