@@ -61,6 +61,7 @@ $overdue_tasks = count_teamlead_overdue_tasks($conn, $team_lead_id);
     <ul>
         <li><a href="workspaces.php">Manage Workspaces</a></li>
         <li><a href="projects.php">Manage Projects</a></li>
+        <li><a href="project_members.php">Manage Project Members</a></li>
         <li><a href="tasks.php">Manage Tasks</a></li>
         <li><a href="milestones.php">Manage Milestones</a></li>
     </ul>

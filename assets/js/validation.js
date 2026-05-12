@@ -334,3 +334,31 @@ if (milestoneForm) {
         }
     });
 }
+
+var projectMemberForm = document.getElementById("projectMemberForm");
+
+if (projectMemberForm) {
+    projectMemberForm.addEventListener("submit", function (e) {
+        var isValid = true;
+
+        var project = document.getElementById("pm_project").value;
+        var user = document.getElementById("pm_user").value;
+
+        document.getElementById("pmProjectError").innerText = "";
+        document.getElementById("pmUserError").innerText = "";
+
+        if (project === "") {
+            document.getElementById("pmProjectError").innerText = "Project is required.";
+            isValid = false;
+        }
+
+        if (user === "") {
+            document.getElementById("pmUserError").innerText = "Member is required.";
+            isValid = false;
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+}
