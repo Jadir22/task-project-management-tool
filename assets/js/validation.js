@@ -98,3 +98,104 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+var workspaceForm = document.getElementById("workspaceForm");
+
+if (workspaceForm) {
+    workspaceForm.addEventListener("submit", function (e) {
+        var isValid = true;
+
+        var name = document.getElementById("workspace_name").value.trim();
+        var description = document.getElementById("workspace_description").value.trim();
+
+        document.getElementById("workspaceNameError").innerText = "";
+        document.getElementById("workspaceDescriptionError").innerText = "";
+
+        if (name === "") {
+            document.getElementById("workspaceNameError").innerText = "Workspace name is required.";
+            isValid = false;
+        }
+
+        if (description === "") {
+            document.getElementById("workspaceDescriptionError").innerText = "Workspace description is required.";
+            isValid = false;
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+}
+
+var projectForm = document.getElementById("projectForm");
+
+if (projectForm) {
+    projectForm.addEventListener("submit", function (e) {
+        var isValid = true;
+
+        var workspace = document.getElementById("project_workspace").value;
+        var name = document.getElementById("project_name").value.trim();
+        var description = document.getElementById("project_description").value.trim();
+        var client = document.getElementById("project_client").value;
+        var deadline = document.getElementById("project_deadline").value.trim();
+        var color = document.getElementById("project_color").value.trim();
+        var status = document.getElementById("project_status").value;
+        var visibility = document.getElementById("project_visibility").value;
+
+        document.getElementById("projectWorkspaceError").innerText = "";
+        document.getElementById("projectNameError").innerText = "";
+        document.getElementById("projectDescriptionError").innerText = "";
+        document.getElementById("projectClientError").innerText = "";
+        document.getElementById("projectDeadlineError").innerText = "";
+        document.getElementById("projectColorError").innerText = "";
+        document.getElementById("projectStatusError").innerText = "";
+        document.getElementById("projectVisibilityError").innerText = "";
+
+        if (workspace === "") {
+            document.getElementById("projectWorkspaceError").innerText = "Workspace is required.";
+            isValid = false;
+        }
+
+        if (name === "") {
+            document.getElementById("projectNameError").innerText = "Project name is required.";
+            isValid = false;
+        }
+
+        if (description === "") {
+            document.getElementById("projectDescriptionError").innerText = "Project description is required.";
+            isValid = false;
+        }
+
+        if (client === "") {
+            document.getElementById("projectClientError").innerText = "Client is required.";
+            isValid = false;
+        }
+
+        if (deadline === "") {
+            document.getElementById("projectDeadlineError").innerText = "Deadline is required.";
+            isValid = false;
+        } else if (!/^\d{4}-\d{2}-\d{2}$/.test(deadline)) {
+            document.getElementById("projectDeadlineError").innerText = "Deadline format must be YYYY-MM-DD.";
+            isValid = false;
+        }
+
+        if (color === "") {
+            document.getElementById("projectColorError").innerText = "Color label is required.";
+            isValid = false;
+        }
+
+        if (status === "") {
+            document.getElementById("projectStatusError").innerText = "Status is required.";
+            isValid = false;
+        }
+
+        if (visibility === "") {
+            document.getElementById("projectVisibilityError").innerText = "Visibility is required.";
+            isValid = false;
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+}

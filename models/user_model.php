@@ -52,3 +52,20 @@ function count_users_by_role($conn, $role) {
 
     return $row["total"];
 }
+
+function get_users_by_role($conn, $role) {
+    $sql = "SELECT * FROM users 
+            WHERE role = ? AND is_active = 1 
+            ORDER BY name ASC";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "s", $role);
+    mysqli_stmt_execute($stmt);
+
+    return mysqli_stmt_get_result($stmt);
+}
