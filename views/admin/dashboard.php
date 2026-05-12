@@ -24,10 +24,12 @@ $total_tasks_today = count_tasks_created_today($conn);
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
 
     <h1>Admin Dashboard</h1>
@@ -91,5 +93,15 @@ $total_tasks_today = count_tasks_created_today($conn);
         </tr>
     </table>
 
+    <h2>Admin Quick Actions</h2>
+    <ul>
+        <li><a href="users.php">Manage Users</a></li>
+        <li><a href="workspaces.php">Manage Workspaces</a></li>
+        <li><a href="projects.php">View All Projects</a></li>
+        <li><a href="tasks.php">View All Tasks</a></li>
+        <li><a href="reports.php">Reports</a></li>
+    </ul>
+
 </body>
+
 </html>
