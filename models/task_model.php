@@ -157,3 +157,53 @@ function update_task_status_by_teamlead($conn, $task_id, $status, $team_lead_id)
 
     return mysqli_stmt_execute($stmt);
 }
+
+function get_all_tasks_admin($conn, $status = "", $priority = "", $assignee_id = "") {
+    $sql = "SELECT 
+                t.*,
+                p.name AS project_name,
+                u.name AS assigned_member,
+                creator.name AS created_by_name
+            FROM tasks t
+            LEFT JOIN projects p ON t.project_id = p.id
+            LEFT JOIN users u ON t.assigned_to = u.id
+            LEFT JOIN users creator ON t.created_by = creator.id
+            WHERE 1";
+
+    $types = "";
+    $params = [];
+
+    if ($status != "") {
+        $sql .= " AND t.status = ?";
+        $types .= "s";
+        $params[] = $status;
+    }
+
+    if ($priority != "") {
+        $sql .= " AND t.priority = ?";
+        $types .= "s";
+        $params[] = $priority;
+    }
+
+    if ($assignee_id != "") {
+        $sql .= " AND t.assigned_to = ?";
+        $types .= "i";
+        $params[] = $assignee_id;
+    }
+
+    $sql .= " ORDER BY t.created_at DESC";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    if (!empty($params)) {
+        mysqli_stmt_bind_param($stmt, $types, ...$params);
+    }
+
+    mysqli_stmt_execute($stmt);
+
+    return mysqli_stmt_get_result($stmt);
+}
