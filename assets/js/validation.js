@@ -275,3 +275,62 @@ if (taskForm) {
         }
     });
 }
+
+var milestoneForm = document.getElementById("milestoneForm");
+
+if (milestoneForm) {
+    milestoneForm.addEventListener("submit", function (e) {
+        var isValid = true;
+
+        var project = document.getElementById("milestone_project").value;
+        var title = document.getElementById("milestone_title").value.trim();
+        var description = document.getElementById("milestone_description").value.trim();
+        var dueDate = document.getElementById("milestone_due_date").value.trim();
+        var status = document.getElementById("milestone_status").value;
+        var clientVisible = document.getElementById("milestone_client_visible").value;
+
+        document.getElementById("milestoneProjectError").innerText = "";
+        document.getElementById("milestoneTitleError").innerText = "";
+        document.getElementById("milestoneDescriptionError").innerText = "";
+        document.getElementById("milestoneDueDateError").innerText = "";
+        document.getElementById("milestoneStatusError").innerText = "";
+        document.getElementById("milestoneClientVisibleError").innerText = "";
+
+        if (project === "") {
+            document.getElementById("milestoneProjectError").innerText = "Project is required.";
+            isValid = false;
+        }
+
+        if (title === "") {
+            document.getElementById("milestoneTitleError").innerText = "Milestone title is required.";
+            isValid = false;
+        }
+
+        if (description === "") {
+            document.getElementById("milestoneDescriptionError").innerText = "Milestone description is required.";
+            isValid = false;
+        }
+
+        if (dueDate === "") {
+            document.getElementById("milestoneDueDateError").innerText = "Due date is required.";
+            isValid = false;
+        } else if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
+            document.getElementById("milestoneDueDateError").innerText = "Due date format must be YYYY-MM-DD.";
+            isValid = false;
+        }
+
+        if (status === "") {
+            document.getElementById("milestoneStatusError").innerText = "Status is required.";
+            isValid = false;
+        }
+
+        if (clientVisible === "") {
+            document.getElementById("milestoneClientVisibleError").innerText = "Client visibility is required.";
+            isValid = false;
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+}
