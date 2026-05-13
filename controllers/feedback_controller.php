@@ -7,7 +7,7 @@ include "../models/feedback_model.php";
 include "../models/milestone_model.php";
 include "../models/activity_model.php";
 
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] != "client") {
+if (!isset($_SESSION["user_id"])) {
     header("Location: ../views/auth/login.php");
     exit();
 }
@@ -18,6 +18,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $action = $_POST["action"] ?? "";
 
     if ($action == "submit_feedback") {
+        if ($_SESSION["role"] != "client") {
+            $_SESSION["errors"] = ["Unauthorized access."];
+            header("Location: ../views/auth/login.php");
+            exit();
+        }
+
         $milestone_id = $_POST["milestone_id"] ?? "";
         $feedback_text = trim($_POST["feedback_text"] ?? "");
         $approval_status = $_POST["approval_status"] ?? "";
@@ -56,14 +62,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $created = create_client_feedback($conn, $milestone_id, $client_id, $feedback_text, $approval_status);
 
         if ($created) {
-            add_activity_log(
-                $conn,
-                null,
-                $milestone["project_id"],
-                $client_id,
-                "client_feedback_submitted",
-                "Client submitted feedback for milestone: " . $milestone["title"]
-            );
+            if (function_exists("add_activity_log")) {
+                add_activity_log(
+                    $conn,
+                    null,
+                    $milestone["project_id"],
+                    $client_id,
+                    "client_feedback_submitted",
+                    "Client submitted feedback for milestone: " . $milestone["title"]
+                );
+            }
 
             $_SESSION["success"] = "Feedback submitted successfully.";
             header("Location: ../views/client/feedback.php");
@@ -74,6 +82,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
     }
+
+    if ($action == "acknowledge_feedback") {
+        if ($_SESSION["role"] != "team_lead") {
+            $_SESSION["errors"] = ["Unauthorized access."];
+            header("Location: ../views/auth/login.php");
+            exit();
+        }
+
+        $feedback_id = $_POST["feedback_id"] ?? "";
+        $team_lead_id = $_SESSION["user_id"];
+
+        if ($feedback_id == "" || !is_numeric($feedback_id)) {
+            $_SESSION["errors"] = ["Invalid feedback selected."];
+            header("Location: ../views/team_lead/client_feedback.php");
+            exit();
+        }
+
+        $feedback = get_feedback_by_id_and_teamlead($conn, $feedback_id, $team_lead_id);
+
+        if (!$feedback) {
+            $_SESSION["errors"] = ["Feedback not found or access denied."];
+            header("Location: ../views/team_lead/client_feedback.php");
+            exit();
+        }
+
+        $updated = acknowledge_client_feedback($conn, $feedback_id);
+
+        if ($updated) {
+            if (function_exists("add_activity_log")) {
+                add_activity_log(
+                    $conn,
+                    $feedback["workspace_id"],
+                    $feedback["project_id"],
+                    $team_lead_id,
+                    "client_feedback_acknowledged",
+                    "Client feedback acknowledged for milestone: " . $feedback["milestone_title"]
+                );
+            }
+
+            $_SESSION["success"] = "Client feedback acknowledged successfully.";
+            header("Location: ../views/team_lead/client_feedback.php");
+            exit();
+        } else {
+            $_SESSION["errors"] = ["Failed to acknowledge feedback."];
+            header("Location: ../views/team_lead/client_feedback.php");
+            exit();
+        }
+    }
+}
+
+if (isset($_SESSION["role"]) && $_SESSION["role"] == "team_lead") {
+    header("Location: ../views/team_lead/client_feedback.php");
+    exit();
 }
 
 header("Location: ../views/client/feedback.php");
