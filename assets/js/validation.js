@@ -775,3 +775,45 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    var clientFeedbackForm = document.getElementById("clientFeedbackForm");
+
+    if (clientFeedbackForm) {
+        clientFeedbackForm.addEventListener("submit", function (e) {
+            var isValid = true;
+
+            var milestone = document.getElementById("feedback_milestone").value;
+            var status = document.getElementById("feedback_status").value;
+            var text = document.getElementById("feedback_text").value.trim();
+
+            document.getElementById("feedbackMilestoneError").innerText = "";
+            document.getElementById("feedbackStatusError").innerText = "";
+            document.getElementById("feedbackTextError").innerText = "";
+
+            if (milestone === "") {
+                document.getElementById("feedbackMilestoneError").innerText = "Milestone is required.";
+                isValid = false;
+            }
+
+            if (status === "") {
+                document.getElementById("feedbackStatusError").innerText = "Approval status is required.";
+                isValid = false;
+            }
+
+            if (status !== "" && status !== "approved" && status !== "revision_requested") {
+                document.getElementById("feedbackStatusError").innerText = "Invalid approval status.";
+                isValid = false;
+            }
+
+            if (text === "") {
+                document.getElementById("feedbackTextError").innerText = "Feedback text is required.";
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    }
+});

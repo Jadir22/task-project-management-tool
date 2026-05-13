@@ -26,6 +26,7 @@ $projects = get_projects_by_client($conn, $client_id);
     <p>
         <a href="dashboard.php">Dashboard</a> |
         <a href="../profile.php">My Profile</a> |
+        <a href="feedback.php">Feedback</a> |
         <a href="../../logout.php">Logout</a>
     </p>
 
