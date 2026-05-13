@@ -62,81 +62,100 @@ $users = get_all_users($conn, $search);
     <h2>User List</h2>
 
     <table border="1" cellpadding="10">
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Company</th>
-        <th>Role</th>
-        <th>Status</th>
-        <th>Created At</th>
-        <th>Change Status</th>
-        <th>Change Role</th>
-    </tr>
+        <tr>
+            <th>ID</th>
+            <th>Profile Pic</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Company</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Created At</th>
+            <th>Change Status</th>
+            <th>Change Role</th>
+        </tr>
 
         <tbody id="adminUsersTableBody">
-        <?php if ($users && mysqli_num_rows($users) > 0): ?>
-            <?php while ($user = mysqli_fetch_assoc($users)): ?>
+            <?php if ($users && mysqli_num_rows($users) > 0): ?>
+                <?php while ($user = mysqli_fetch_assoc($users)): ?>
+                    <tr>
+                        <td><?php echo $user["id"]; ?></td>
+                        <td>
+                            <?php if (!empty($user["profile_pic"])): ?>
+                                <img src="../../<?php echo htmlspecialchars($user["profile_pic"]); ?>" alt="Profile Picture" width="50" height="50">
+                            <?php else: ?>
+                                No Image
+                            <?php endif; ?>
+                        </td>
+                        <td><?php echo htmlspecialchars($user["name"]); ?></td>
+                        <td><?php echo htmlspecialchars($user["email"]); ?></td>
+                        <td><?php echo htmlspecialchars($user["phone"]); ?></td>
+                        <td><?php echo htmlspecialchars($user["company_name"] ?? ""); ?></td>
+                        <td><?php echo htmlspecialchars($user["role"]); ?></td>
+                        <td>
+                            <?php
+                            if ($user["is_active"] == 1) {
+                                echo "Active";
+                            } else {
+                                echo "Inactive";
+                            }
+                            ?>
+                        </td>
+                        <td><?php echo $user["created_at"]; ?></td>
+
+                        <td>
+                            <form class="admin-user-status-form" action="../../controllers/admin_user_controller.php"
+                                method="POST">
+                                <input type="hidden" name="action" value="change_status">
+                                <input type="hidden" name="user_id" value="<?php echo $user["id"]; ?>">
+
+                                <select name="is_active">
+                                    <option value="1" <?php if ($user["is_active"] == 1)
+                                        echo "selected"; ?>>Active</option>
+                                    <option value="0" <?php if ($user["is_active"] == 0)
+                                        echo "selected"; ?>>Inactive</option>
+                                </select>
+
+                                <button type="submit">Update</button>
+                            </form>
+                        </td>
+
+                        <td>
+                            <form class="admin-user-role-form" action="../../controllers/admin_user_controller.php"
+                                method="POST">
+                                <input type="hidden" name="action" value="change_role">
+                                <input type="hidden" name="user_id" value="<?php echo $user["id"]; ?>">
+
+                                <select name="role">
+                                    <option value="member" <?php if ($user["role"] == "member")
+                                        echo "selected"; ?>>Member
+                                    </option>
+                                    <option value="team_lead" <?php if ($user["role"] == "team_lead")
+                                        echo "selected"; ?>>Team
+                                        Lead</option>
+                                    <option value="client" <?php if ($user["role"] == "client")
+                                        echo "selected"; ?>>Client
+                                    </option>
+                                    <option value="admin" <?php if ($user["role"] == "admin")
+                                        echo "selected"; ?>>Admin</option>
+                                </select>
+
+                                <button type="submit">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            <?php else: ?>
                 <tr>
-                    <td><?php echo $user["id"]; ?></td>
-                    <td><?php echo htmlspecialchars($user["name"]); ?></td>
-                    <td><?php echo htmlspecialchars($user["email"]); ?></td>
-                    <td><?php echo htmlspecialchars($user["phone"]); ?></td>
-                    <td><?php echo htmlspecialchars($user["company_name"] ?? ""); ?></td>
-                    <td><?php echo htmlspecialchars($user["role"]); ?></td>
-                    <td>
-                        <?php
-                        if ($user["is_active"] == 1) {
-                            echo "Active";
-                        } else {
-                            echo "Inactive";
-                        }
-                        ?>
-                    </td>
-                    <td><?php echo $user["created_at"]; ?></td>
-
-                    <td>
-                        <form class="admin-user-status-form" action="../../controllers/admin_user_controller.php" method="POST">
-                            <input type="hidden" name="action" value="change_status">
-                            <input type="hidden" name="user_id" value="<?php echo $user["id"]; ?>">
-
-                            <select name="is_active">
-                                <option value="1" <?php if ($user["is_active"] == 1) echo "selected"; ?>>Active</option>
-                                <option value="0" <?php if ($user["is_active"] == 0) echo "selected"; ?>>Inactive</option>
-                            </select>
-
-                            <button type="submit">Update</button>
-                        </form>
-                    </td>
-
-                    <td>
-                        <form class="admin-user-role-form" action="../../controllers/admin_user_controller.php" method="POST">
-                            <input type="hidden" name="action" value="change_role">
-                            <input type="hidden" name="user_id" value="<?php echo $user["id"]; ?>">
-
-                            <select name="role">
-                                <option value="member" <?php if ($user["role"] == "member") echo "selected"; ?>>Member</option>
-                                <option value="team_lead" <?php if ($user["role"] == "team_lead") echo "selected"; ?>>Team Lead</option>
-                                <option value="client" <?php if ($user["role"] == "client") echo "selected"; ?>>Client</option>
-                                <option value="admin" <?php if ($user["role"] == "admin") echo "selected"; ?>>Admin</option>
-                            </select>
-
-                            <button type="submit">Update</button>
-                        </form>
-                    </td>
+                    <td colspan="11">No users found.</td>
                 </tr>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="10">No users found.</td>
-            </tr>
-        <?php endif; ?>
-    </tbody>
-</table>
+            <?php endif; ?>
+        </tbody>
+    </table>
 
-<script src="../../assets/js/ajax.js"></script>
-<script src="../../assets/js/validation.js"></script>
+    <script src="../../assets/js/ajax.js"></script>
+    <script src="../../assets/js/validation.js"></script>
 
 </body>
 

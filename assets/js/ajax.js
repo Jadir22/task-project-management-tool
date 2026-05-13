@@ -77,9 +77,16 @@ document.addEventListener("DOMContentLoaded", function () {
                                     var companyName = user.company_name ? user.company_name : "";
                                     var phone = user.phone ? user.phone : "";
 
+                                    var profilePicCell = "No Image";
+
+                                    if (user.profile_pic && user.profile_pic !== "") {
+                                        profilePicCell = `<img src="../../${escapeHtml(user.profile_pic)}" alt="Profile Picture" width="50" height="50">`;
+                                    }
+
                                     var row = `
                                         <tr>
                                             <td>${escapeHtml(user.id)}</td>
+                                            <td>${profilePicCell}</td>
                                             <td>${escapeHtml(user.name)}</td>
                                             <td>${escapeHtml(user.email)}</td>
                                             <td>${escapeHtml(phone)}</td>
@@ -125,25 +132,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
                                 adminUserSearchMessage.style.color = "green";
                                 adminUserSearchMessage.innerText = response.users.length + " user(s) found.";
-                            } else {
+                            } 
+                            else {
                                 adminUsersTableBody.innerHTML = `
                                     <tr>
-                                        <td colspan="10">No users found.</td>
+                                        <td colspan="11">No users found.</td>
                                     </tr>
                                 `;
 
                                 adminUserSearchMessage.style.color = "red";
                                 adminUserSearchMessage.innerText = "No users found.";
                             }
-                        } else {
+                        } 
+                        else {
                             adminUserSearchMessage.style.color = "red";
                             adminUserSearchMessage.innerText = response.message;
                         }
-                    } catch (e) {
+                    } 
+                    catch (e) {
                         adminUserSearchMessage.style.color = "red";
                         adminUserSearchMessage.innerText = "Invalid server response.";
                     }
-                } else {
+                } 
+                else {
                     adminUserSearchMessage.style.color = "red";
                     adminUserSearchMessage.innerText = "Request failed.";
                 }

@@ -37,6 +37,7 @@ $total_tasks_today = count_tasks_created_today($conn);
     <p>Welcome, <?php echo htmlspecialchars($_SESSION["name"]); ?>!</p>
 
     <p>
+        <a href="../profile.php">My Profile</a> |
         <a href="../../logout.php">Logout</a>
     </p>
 
