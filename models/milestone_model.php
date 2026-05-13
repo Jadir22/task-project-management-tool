@@ -157,3 +157,54 @@ function count_client_completed_milestones($conn, $client_id) {
 
     return $row["total"];
 }
+
+function get_client_visible_milestones_all($conn, $client_id) {
+    $sql = "SELECT 
+                m.*,
+                p.name AS project_name,
+                p.id AS project_id
+            FROM milestones m
+            LEFT JOIN projects p ON m.project_id = p.id
+            WHERE p.client_id = ?
+            AND p.visibility = 'client_visible'
+            AND p.status != 'archived'
+            AND m.is_client_visible = 1
+            ORDER BY m.due_date ASC";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $client_id);
+    mysqli_stmt_execute($stmt);
+
+    return mysqli_stmt_get_result($stmt);
+}
+
+function get_client_visible_milestone_by_id($conn, $milestone_id, $client_id) {
+    $sql = "SELECT 
+                m.*,
+                p.name AS project_name,
+                p.id AS project_id
+            FROM milestones m
+            LEFT JOIN projects p ON m.project_id = p.id
+            WHERE m.id = ?
+            AND p.client_id = ?
+            AND p.visibility = 'client_visible'
+            AND p.status != 'archived'
+            AND m.is_client_visible = 1";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "ii", $milestone_id, $client_id);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_assoc($result);
+}
