@@ -30,6 +30,7 @@ $project_progress = get_teamlead_project_progress($conn, $team_lead_id);
         <a href="projects.php">Projects</a> |
         <a href="tasks.php">Tasks</a> |
         <a href="milestones.php">Milestones</a> |
+        <a href="burndown.php">Burndown Summary</a> |
         <a href="../../logout.php">Logout</a>
     </p>
 
