@@ -817,3 +817,23 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    var acknowledgeFeedbackForms = document.querySelectorAll(".acknowledge-feedback-form");
+
+    acknowledgeFeedbackForms.forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+            var feedbackId = form.querySelector("input[name='feedback_id']").value;
+
+            if (feedbackId === "" || isNaN(feedbackId)) {
+                alert("Invalid feedback selected.");
+                e.preventDefault();
+                return;
+            }
+
+            if (!confirm("Are you sure you want to acknowledge this client feedback?")) {
+                e.preventDefault();
+            }
+        });
+    });
+});
