@@ -30,6 +30,7 @@ $overdue_tasks = count_teamlead_overdue_tasks($conn, $team_lead_id);
     <p>Welcome, <?php echo htmlspecialchars($_SESSION["name"]); ?>!</p>
 
     <p>
+        <a href="../profile.php">My Profile</a> |    
         <a href="../../logout.php">Logout</a>
     </p>
 

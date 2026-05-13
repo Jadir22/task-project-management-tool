@@ -488,3 +488,101 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    var profileForm = document.getElementById("profileForm");
+
+    if (profileForm) {
+        profileForm.addEventListener("submit", function (e) {
+            var isValid = true;
+
+            var name = document.getElementById("profile_name").value.trim();
+            var phone = document.getElementById("profile_phone").value.trim();
+            var profilePic = document.getElementById("profile_pic");
+
+            document.getElementById("profileNameError").innerText = "";
+            document.getElementById("profilePhoneError").innerText = "";
+            document.getElementById("profilePicError").innerText = "";
+
+            if (name === "") {
+                document.getElementById("profileNameError").innerText = "Name is required.";
+                isValid = false;
+            }
+
+            if (phone === "") {
+                document.getElementById("profilePhoneError").innerText = "Phone is required.";
+                isValid = false;
+            }
+
+            if (profilePic.files.length > 0) {
+                var file = profilePic.files[0];
+                var fileName = file.name.toLowerCase();
+                var fileSize = file.size;
+                var allowedExtensions = [".jpg", ".jpeg", ".png"];
+
+                var validExtension = false;
+
+                for (var i = 0; i < allowedExtensions.length; i++) {
+                    if (fileName.endsWith(allowedExtensions[i])) {
+                        validExtension = true;
+                    }
+                }
+
+                if (!validExtension) {
+                    document.getElementById("profilePicError").innerText = "Only JPG, JPEG, and PNG files are allowed.";
+                    isValid = false;
+                }
+
+                if (fileSize > 2 * 1024 * 1024) {
+                    document.getElementById("profilePicError").innerText = "Profile picture must be less than 2MB.";
+                    isValid = false;
+                }
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    var passwordForm = document.getElementById("passwordForm");
+
+    if (passwordForm) {
+        passwordForm.addEventListener("submit", function (e) {
+            var isValid = true;
+
+            var currentPassword = document.getElementById("current_password").value;
+            var newPassword = document.getElementById("new_password").value;
+            var confirmPassword = document.getElementById("profile_confirm_password").value;
+
+            document.getElementById("currentPasswordError").innerText = "";
+            document.getElementById("newPasswordError").innerText = "";
+            document.getElementById("profileConfirmPasswordError").innerText = "";
+
+            if (currentPassword === "") {
+                document.getElementById("currentPasswordError").innerText = "Current password is required.";
+                isValid = false;
+            }
+
+            if (newPassword === "") {
+                document.getElementById("newPasswordError").innerText = "New password is required.";
+                isValid = false;
+            } else if (newPassword.length < 6) {
+                document.getElementById("newPasswordError").innerText = "New password must be at least 6 characters.";
+                isValid = false;
+            }
+
+            if (confirmPassword === "") {
+                document.getElementById("profileConfirmPasswordError").innerText = "Confirm password is required.";
+                isValid = false;
+            } else if (newPassword !== confirmPassword) {
+                document.getElementById("profileConfirmPasswordError").innerText = "Passwords do not match.";
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    }
+});

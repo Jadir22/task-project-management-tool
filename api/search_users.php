@@ -30,6 +30,7 @@ if ($result) {
             "email" => $row["email"],
             "phone" => $row["phone"],
             "company_name" => $row["company_name"],
+            "profile_pic" => $row["profile_pic"],
             "role" => $row["role"],
             "is_active" => $row["is_active"],
             "created_at" => $row["created_at"]
