@@ -586,3 +586,96 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    var editProjectForm = document.getElementById("editProjectForm");
+
+    if (editProjectForm) {
+        editProjectForm.addEventListener("submit", function (e) {
+            var isValid = true;
+
+            var workspace = document.getElementById("edit_project_workspace").value;
+            var name = document.getElementById("edit_project_name").value.trim();
+            var description = document.getElementById("edit_project_description").value.trim();
+            var client = document.getElementById("edit_project_client").value;
+            var deadline = document.getElementById("edit_project_deadline").value.trim();
+            var color = document.getElementById("edit_project_color").value.trim();
+            var status = document.getElementById("edit_project_status").value;
+            var visibility = document.getElementById("edit_project_visibility").value;
+
+            document.getElementById("editProjectWorkspaceError").innerText = "";
+            document.getElementById("editProjectNameError").innerText = "";
+            document.getElementById("editProjectDescriptionError").innerText = "";
+            document.getElementById("editProjectClientError").innerText = "";
+            document.getElementById("editProjectDeadlineError").innerText = "";
+            document.getElementById("editProjectColorError").innerText = "";
+            document.getElementById("editProjectStatusError").innerText = "";
+            document.getElementById("editProjectVisibilityError").innerText = "";
+
+            if (workspace === "") {
+                document.getElementById("editProjectWorkspaceError").innerText = "Workspace is required.";
+                isValid = false;
+            }
+
+            if (name === "") {
+                document.getElementById("editProjectNameError").innerText = "Project name is required.";
+                isValid = false;
+            }
+
+            if (description === "") {
+                document.getElementById("editProjectDescriptionError").innerText = "Project description is required.";
+                isValid = false;
+            }
+
+            if (client === "") {
+                document.getElementById("editProjectClientError").innerText = "Client is required.";
+                isValid = false;
+            }
+
+            if (deadline === "") {
+                document.getElementById("editProjectDeadlineError").innerText = "Deadline is required.";
+                isValid = false;
+            } else if (!/^\d{4}-\d{2}-\d{2}$/.test(deadline)) {
+                document.getElementById("editProjectDeadlineError").innerText = "Deadline format must be YYYY-MM-DD.";
+                isValid = false;
+            }
+
+            if (color === "") {
+                document.getElementById("editProjectColorError").innerText = "Color label is required.";
+                isValid = false;
+            }
+
+            if (status === "") {
+                document.getElementById("editProjectStatusError").innerText = "Status is required.";
+                isValid = false;
+            }
+
+            if (visibility === "") {
+                document.getElementById("editProjectVisibilityError").innerText = "Visibility is required.";
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    var archiveProjectForms = document.querySelectorAll(".archive-project-form");
+
+    archiveProjectForms.forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+            var projectId = form.querySelector("input[name='project_id']").value;
+
+            if (projectId === "" || isNaN(projectId)) {
+                alert("Invalid project selected.");
+                e.preventDefault();
+                return;
+            }
+
+            if (!confirm("Are you sure you want to archive this completed project?")) {
+                e.preventDefault();
+            }
+        });
+    });
+});

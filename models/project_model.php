@@ -215,3 +215,99 @@ function get_all_projects_admin($conn, $workspace_id = "", $status = "", $client
 
     return mysqli_stmt_get_result($stmt);
 }
+
+function get_project_by_id_and_teamlead($conn, $project_id, $team_lead_id) {
+    $sql = "SELECT p.*
+            FROM projects p
+            LEFT JOIN workspaces w ON p.workspace_id = w.id
+            WHERE p.id = ? AND w.owner_id = ?";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "ii", $project_id, $team_lead_id);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_assoc($result);
+}
+
+function update_project_by_teamlead($conn, $project_id, $workspace_id, $name, $description, $client_id, $deadline, $color_label, $status, $visibility, $team_lead_id) {
+    $sql = "UPDATE projects p
+            LEFT JOIN workspaces w ON p.workspace_id = w.id
+            SET p.workspace_id = ?,
+                p.name = ?,
+                p.description = ?,
+                p.client_id = ?,
+                p.deadline = ?,
+                p.color_label = ?,
+                p.status = ?,
+                p.visibility = ?
+            WHERE p.id = ? AND w.owner_id = ?";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param(
+        $stmt,
+        "ississssii",
+        $workspace_id,
+        $name,
+        $description,
+        $client_id,
+        $deadline,
+        $color_label,
+        $status,
+        $visibility,
+        $project_id,
+        $team_lead_id
+    );
+
+    return mysqli_stmt_execute($stmt);
+}
+
+function archive_project_by_teamlead($conn, $project_id, $team_lead_id) {
+    $sql = "UPDATE projects p
+            LEFT JOIN workspaces w ON p.workspace_id = w.id
+            SET p.status = 'archived'
+            WHERE p.id = ?
+            AND w.owner_id = ?
+            AND p.status = 'completed'";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "ii", $project_id, $team_lead_id);
+
+    return mysqli_stmt_execute($stmt);
+}
+
+function get_archived_projects_by_teamlead($conn, $team_lead_id) {
+    $sql = "SELECT p.*, w.name AS workspace_name, u.name AS client_name
+            FROM projects p
+            LEFT JOIN workspaces w ON p.workspace_id = w.id
+            LEFT JOIN users u ON p.client_id = u.id
+            WHERE w.owner_id = ?
+            AND p.status = 'archived'
+            ORDER BY p.created_at DESC";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $team_lead_id);
+    mysqli_stmt_execute($stmt);
+
+    return mysqli_stmt_get_result($stmt);
+}
