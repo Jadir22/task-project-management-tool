@@ -679,3 +679,99 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    var editTaskForm = document.getElementById("editTaskForm");
+
+    if (editTaskForm) {
+        editTaskForm.addEventListener("submit", function (e) {
+            var isValid = true;
+
+            var project = document.getElementById("edit_task_project").value;
+            var title = document.getElementById("edit_task_title").value.trim();
+            var description = document.getElementById("edit_task_description").value.trim();
+            var assignedTo = document.getElementById("edit_task_assigned_to").value;
+            var priority = document.getElementById("edit_task_priority").value;
+            var status = document.getElementById("edit_task_status").value;
+            var dueDate = document.getElementById("edit_task_due_date").value.trim();
+            var estimatedHours = document.getElementById("edit_task_estimated_hours").value.trim();
+
+            document.getElementById("editTaskProjectError").innerText = "";
+            document.getElementById("editTaskTitleError").innerText = "";
+            document.getElementById("editTaskDescriptionError").innerText = "";
+            document.getElementById("editTaskAssignedError").innerText = "";
+            document.getElementById("editTaskPriorityError").innerText = "";
+            document.getElementById("editTaskStatusError").innerText = "";
+            document.getElementById("editTaskDueDateError").innerText = "";
+            document.getElementById("editTaskEstimatedHoursError").innerText = "";
+
+            if (project === "") {
+                document.getElementById("editTaskProjectError").innerText = "Project is required.";
+                isValid = false;
+            }
+
+            if (title === "") {
+                document.getElementById("editTaskTitleError").innerText = "Task title is required.";
+                isValid = false;
+            }
+
+            if (description === "") {
+                document.getElementById("editTaskDescriptionError").innerText = "Task description is required.";
+                isValid = false;
+            }
+
+            if (assignedTo === "") {
+                document.getElementById("editTaskAssignedError").innerText = "Assigned member is required.";
+                isValid = false;
+            }
+
+            if (priority === "") {
+                document.getElementById("editTaskPriorityError").innerText = "Priority is required.";
+                isValid = false;
+            }
+
+            if (status === "") {
+                document.getElementById("editTaskStatusError").innerText = "Status is required.";
+                isValid = false;
+            }
+
+            if (dueDate === "") {
+                document.getElementById("editTaskDueDateError").innerText = "Due date is required.";
+                isValid = false;
+            } else if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
+                document.getElementById("editTaskDueDateError").innerText = "Due date format must be YYYY-MM-DD.";
+                isValid = false;
+            }
+
+            if (estimatedHours === "") {
+                document.getElementById("editTaskEstimatedHoursError").innerText = "Estimated hours is required.";
+                isValid = false;
+            } else if (isNaN(estimatedHours) || Number(estimatedHours) <= 0) {
+                document.getElementById("editTaskEstimatedHoursError").innerText = "Estimated hours must be a positive number.";
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    var deleteTaskForms = document.querySelectorAll(".delete-task-form");
+
+    deleteTaskForms.forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+            var taskId = form.querySelector("input[name='task_id']").value;
+
+            if (taskId === "" || isNaN(taskId)) {
+                alert("Invalid task selected.");
+                e.preventDefault();
+                return;
+            }
+
+            if (!confirm("Are you sure you want to delete this task?")) {
+                e.preventDefault();
+            }
+        });
+    });
+});

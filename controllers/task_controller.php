@@ -111,4 +111,156 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
     }
+
+        if ($action == "update_task") {
+        $task_id = $_POST["task_id"] ?? "";
+        $project_id = $_POST["project_id"] ?? "";
+        $milestone_id = $_POST["milestone_id"] ?? "";
+        $title = trim($_POST["title"] ?? "");
+        $description = trim($_POST["description"] ?? "");
+        $assigned_to = $_POST["assigned_to"] ?? "";
+        $priority = $_POST["priority"] ?? "";
+        $status = $_POST["status"] ?? "";
+        $due_date = trim($_POST["due_date"] ?? "");
+        $estimated_hours = trim($_POST["estimated_hours"] ?? "");
+        $team_lead_id = $_SESSION["user_id"];
+
+        if ($task_id == "" || !is_numeric($task_id)) {
+            $errors[] = "Invalid task selected.";
+        }
+
+        if ($project_id == "") {
+            $errors[] = "Project is required.";
+        }
+
+        if ($title == "") {
+            $errors[] = "Task title is required.";
+        }
+
+        if ($description == "") {
+            $errors[] = "Task description is required.";
+        }
+
+        if ($assigned_to == "") {
+            $errors[] = "Assigned member is required.";
+        }
+
+        $allowed_priorities = ["low", "medium", "high", "critical"];
+
+        if (!in_array($priority, $allowed_priorities)) {
+            $errors[] = "Invalid priority selected.";
+        }
+
+        $allowed_status = ["todo", "in_progress", "review", "done"];
+
+        if (!in_array($status, $allowed_status)) {
+            $errors[] = "Invalid task status selected.";
+        }
+
+        if ($due_date == "") {
+            $errors[] = "Due date is required.";
+        } elseif (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $due_date)) {
+            $errors[] = "Due date format must be YYYY-MM-DD.";
+        }
+
+        if ($estimated_hours == "") {
+            $errors[] = "Estimated hours is required.";
+        } elseif (!is_numeric($estimated_hours) || $estimated_hours <= 0) {
+            $errors[] = "Estimated hours must be a positive number.";
+        }
+
+        if ($milestone_id == "") {
+            $milestone_id = null;
+        }
+
+        $task = get_task_by_id_and_teamlead($conn, $task_id, $team_lead_id);
+
+        if (!$task) {
+            $errors[] = "Task not found or access denied.";
+        }
+
+        if (!empty($errors)) {
+            $_SESSION["errors"] = $errors;
+            header("Location: ../views/team_lead/edit_task.php?task_id=" . $task_id);
+            exit();
+        }
+
+        $updated = update_task_by_teamlead(
+            $conn,
+            $task_id,
+            $project_id,
+            $milestone_id,
+            $title,
+            $description,
+            $assigned_to,
+            $priority,
+            $status,
+            $due_date,
+            $estimated_hours,
+            $team_lead_id
+        );
+
+        if ($updated) {
+            if (function_exists("add_activity_log")) {
+                add_activity_log(
+                    $conn,
+                    null,
+                    $project_id,
+                    $_SESSION["user_id"],
+                    "task_updated",
+                    "Task updated: " . $title
+                );
+            }
+
+            $_SESSION["success"] = "Task updated successfully.";
+            header("Location: ../views/team_lead/tasks.php");
+            exit();
+        } else {
+            $_SESSION["errors"] = ["Failed to update task."];
+            header("Location: ../views/team_lead/edit_task.php?task_id=" . $task_id);
+            exit();
+        }
+    }
+
+    if ($action == "delete_task") {
+        $task_id = $_POST["task_id"] ?? "";
+        $team_lead_id = $_SESSION["user_id"];
+
+        if ($task_id == "" || !is_numeric($task_id)) {
+            $_SESSION["errors"] = ["Invalid task selected."];
+            header("Location: ../views/team_lead/tasks.php");
+            exit();
+        }
+
+        $task = get_task_by_id_and_teamlead($conn, $task_id, $team_lead_id);
+
+        if (!$task) {
+            $_SESSION["errors"] = ["Task not found or access denied."];
+            header("Location: ../views/team_lead/tasks.php");
+            exit();
+        }
+
+        $deleted = delete_task_by_teamlead($conn, $task_id, $team_lead_id);
+
+        if ($deleted) {
+            if (function_exists("add_activity_log")) {
+                add_activity_log(
+                    $conn,
+                    null,
+                    $task["project_id"],
+                    $_SESSION["user_id"],
+                    "task_deleted",
+                    "Task deleted: " . $task["title"]
+                );
+            }
+
+            $_SESSION["success"] = "Task deleted successfully.";
+            header("Location: ../views/team_lead/tasks.php");
+            exit();
+        } else {
+            $_SESSION["errors"] = ["Failed to delete task."];
+            header("Location: ../views/team_lead/tasks.php");
+            exit();
+        }
+    }
 }
