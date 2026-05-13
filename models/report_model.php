@@ -146,3 +146,28 @@ function get_teamlead_project_progress($conn, $team_lead_id) {
 
     return mysqli_stmt_get_result($stmt);
 }
+
+function get_teamlead_burndown_summary($conn, $team_lead_id) {
+    $sql = "SELECT 
+                DATE(t.created_at) AS task_date,
+                SUM(CASE WHEN t.status = 'done' THEN 1 ELSE 0 END) AS completed_tasks,
+                SUM(CASE WHEN t.status != 'done' THEN 1 ELSE 0 END) AS remaining_tasks,
+                COUNT(t.id) AS total_tasks
+            FROM tasks t
+            LEFT JOIN projects p ON t.project_id = p.id
+            LEFT JOIN workspaces w ON p.workspace_id = w.id
+            WHERE w.owner_id = ?
+            GROUP BY DATE(t.created_at)
+            ORDER BY task_date ASC";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $team_lead_id);
+    mysqli_stmt_execute($stmt);
+
+    return mysqli_stmt_get_result($stmt);
+}
