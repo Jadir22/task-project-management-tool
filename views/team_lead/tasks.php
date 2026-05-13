@@ -15,10 +15,12 @@ $tasks = get_tasks_by_teamlead($conn, $team_lead_id);
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Manage Tasks</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
 
     <h1>Manage Tasks</h1>
@@ -63,6 +65,7 @@ $tasks = get_tasks_by_teamlead($conn, $team_lead_id);
             <th>Due Date</th>
             <th>Estimated Hours</th>
             <th>Created At</th>
+            <th>Action</th>
         </tr>
 
         <?php if ($tasks && mysqli_num_rows($tasks) > 0): ?>
@@ -84,10 +87,15 @@ $tasks = get_tasks_by_teamlead($conn, $team_lead_id);
                     <td><?php echo htmlspecialchars($task["priority"]); ?></td>
                     <td>
                         <select class="task-status-select" data-task-id="<?php echo $task["id"]; ?>">
-                            <option value="todo" <?php if ($task["status"] == "todo") echo "selected"; ?>>To Do</option>
-                            <option value="in_progress" <?php if ($task["status"] == "in_progress") echo "selected"; ?>>In Progress</option>
-                            <option value="review" <?php if ($task["status"] == "review") echo "selected"; ?>>Review</option>
-                            <option value="done" <?php if ($task["status"] == "done") echo "selected"; ?>>Done</option>
+                            <option value="todo" <?php if ($task["status"] == "todo")
+                                echo "selected"; ?>>To Do</option>
+                            <option value="in_progress" <?php if ($task["status"] == "in_progress")
+                                echo "selected"; ?>>In
+                                Progress</option>
+                            <option value="review" <?php if ($task["status"] == "review")
+                                echo "selected"; ?>>Review</option>
+                            <option value="done" <?php if ($task["status"] == "done")
+                                echo "selected"; ?>>Done</option>
                         </select>
 
                         <small class="task-status-message" id="task-status-message-<?php echo $task["id"]; ?>"></small>
@@ -95,16 +103,26 @@ $tasks = get_tasks_by_teamlead($conn, $team_lead_id);
                     <td><?php echo htmlspecialchars($task["due_date"]); ?></td>
                     <td><?php echo htmlspecialchars($task["estimated_hours"]); ?></td>
                     <td><?php echo $task["created_at"]; ?></td>
+                    <td>
+                        <a href="edit_task.php?task_id=<?php echo $task["id"]; ?>">Edit</a>
+
+                        <form action="../../controllers/task_controller.php" method="POST" class="delete-task-form" style="display:inline;">
+                            <input type="hidden" name="action" value="delete_task">
+                            <input type="hidden" name="task_id" value="<?php echo $task["id"]; ?>">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
                 </tr>
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="10">No task found.</td>
+                <td colspan="11">No task found.</td>
             </tr>
         <?php endif; ?>
     </table>
 
     <script src="../../assets/js/ajax.js"></script>
-
+    <script src="../../assets/js/validation.js"></script>
 </body>
+
 </html>

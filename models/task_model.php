@@ -207,3 +207,83 @@ function get_all_tasks_admin($conn, $status = "", $priority = "", $assignee_id =
 
     return mysqli_stmt_get_result($stmt);
 }
+
+function get_task_by_id_and_teamlead($conn, $task_id, $team_lead_id) {
+    $sql = "SELECT t.*
+            FROM tasks t
+            LEFT JOIN projects p ON t.project_id = p.id
+            LEFT JOIN workspaces w ON p.workspace_id = w.id
+            WHERE t.id = ? AND w.owner_id = ?";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "ii", $task_id, $team_lead_id);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_assoc($result);
+}
+
+function update_task_by_teamlead($conn, $task_id, $project_id, $milestone_id, $title, $description, $assigned_to, $priority, $status, $due_date, $estimated_hours, $team_lead_id) {
+    $sql = "UPDATE tasks t
+            LEFT JOIN projects p ON t.project_id = p.id
+            LEFT JOIN workspaces w ON p.workspace_id = w.id
+            SET t.project_id = ?,
+                t.milestone_id = ?,
+                t.title = ?,
+                t.description = ?,
+                t.assigned_to = ?,
+                t.priority = ?,
+                t.status = ?,
+                t.due_date = ?,
+                t.estimated_hours = ?,
+                t.completed_at = CASE WHEN ? = 'done' THEN NOW() ELSE t.completed_at END
+            WHERE t.id = ? AND w.owner_id = ?";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param(
+        $stmt,
+        "iississsdsii",
+        $project_id,
+        $milestone_id,
+        $title,
+        $description,
+        $assigned_to,
+        $priority,
+        $status,
+        $due_date,
+        $estimated_hours,
+        $status,
+        $task_id,
+        $team_lead_id
+    );
+
+    return mysqli_stmt_execute($stmt);
+}
+
+function delete_task_by_teamlead($conn, $task_id, $team_lead_id) {
+    $sql = "DELETE t
+            FROM tasks t
+            LEFT JOIN projects p ON t.project_id = p.id
+            LEFT JOIN workspaces w ON p.workspace_id = w.id
+            WHERE t.id = ? AND w.owner_id = ?";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "ii", $task_id, $team_lead_id);
+
+    return mysqli_stmt_execute($stmt);
+}
