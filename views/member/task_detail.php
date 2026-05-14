@@ -61,10 +61,22 @@ if (!$task) {
     <p><strong>Description:</strong> <?php echo htmlspecialchars($task["description"]); ?></p>
     <p><strong>Created By:</strong> <?php echo htmlspecialchars($task["created_by_name"] ?? "Unknown"); ?></p>
     <p><strong>Priority:</strong> <?php echo htmlspecialchars($task["priority"]); ?></p>
-    <p><strong>Status:</strong> <?php echo htmlspecialchars($task["status"]); ?></p>
+    <p>
+    <strong>Status:</strong>
+    <select class="member-task-status-select" data-task-id="<?php echo $task["id"]; ?>">
+        <option value="todo" <?php if ($task["status"] == "todo") echo "selected"; ?>>To Do</option>
+        <option value="in_progress" <?php if ($task["status"] == "in_progress") echo "selected"; ?>>In Progress</option>
+        <option value="review" <?php if ($task["status"] == "review") echo "selected"; ?>>Review</option>
+        <option value="done" <?php if ($task["status"] == "done") echo "selected"; ?>>Done</option>
+    </select>
+
+    <small class="member-task-status-message"></small>
+    </p>
     <p><strong>Due Date:</strong> <?php echo htmlspecialchars($task["due_date"]); ?></p>
     <p><strong>Estimated Hours:</strong> <?php echo htmlspecialchars($task["estimated_hours"]); ?></p>
     <p><strong>Created At:</strong> <?php echo htmlspecialchars($task["created_at"]); ?></p>
+    
+    <script src="../../assets/js/ajax.js"></script>
 
 </body>
 </html>
