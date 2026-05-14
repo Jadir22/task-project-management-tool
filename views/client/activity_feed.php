@@ -15,10 +15,12 @@ $activities = get_client_activity_feed($conn, $client_id);
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Client Activity Feed</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
+
 <body>
 
     <h1>Client Activity Feed</h1>
@@ -67,4 +69,5 @@ $activities = get_client_activity_feed($conn, $client_id);
     </table>
 
 </body>
+
 </html>
