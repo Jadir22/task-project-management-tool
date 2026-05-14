@@ -242,3 +242,102 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    var projectFilter = document.getElementById("client_task_project");
+    var statusFilter = document.getElementById("client_task_status");
+    var tableBody = document.getElementById("clientTaskTableBody");
+    var messageBox = document.getElementById("clientTaskFilterMessage");
+
+    if (projectFilter && statusFilter && tableBody) {
+        function loadClientTasks() {
+            var projectId = projectFilter.value;
+            var status = statusFilter.value;
+
+            if (messageBox) {
+                messageBox.style.color = "black";
+                messageBox.innerText = "Loading tasks...";
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open(
+                "GET",
+                "../../api/client_filter_tasks.php?project_id=" + encodeURIComponent(projectId) + "&status=" + encodeURIComponent(status),
+                true
+            );
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+
+                        if (response.success) {
+                            tableBody.innerHTML = "";
+
+                            if (response.tasks.length > 0) {
+                                response.tasks.forEach(function (task) {
+                                    var milestoneTitle = task.milestone_title ? task.milestone_title : "No Milestone";
+                                    var assignedMember = task.assigned_member ? task.assigned_member : "Not Assigned";
+
+                                    var row = `
+                                        <tr>
+                                            <td>${escapeHtml(task.id)}</td>
+                                            <td>${escapeHtml(task.project_name)}</td>
+                                            <td>${escapeHtml(milestoneTitle)}</td>
+                                            <td>${escapeHtml(task.title)}</td>
+                                            <td>${escapeHtml(task.description)}</td>
+                                            <td>${escapeHtml(assignedMember)}</td>
+                                            <td>${escapeHtml(task.priority)}</td>
+                                            <td>${escapeHtml(task.status)}</td>
+                                            <td>${escapeHtml(task.due_date)}</td>
+                                            <td>${escapeHtml(task.estimated_hours)}</td>
+                                        </tr>
+                                    `;
+
+                                    tableBody.innerHTML += row;
+                                });
+
+                                if (messageBox) {
+                                    messageBox.style.color = "green";
+                                    messageBox.innerText = response.tasks.length + " task(s) found.";
+                                }
+                            } else {
+                                tableBody.innerHTML = `
+                                    <tr>
+                                        <td colspan="10">No task found.</td>
+                                    </tr>
+                                `;
+
+                                if (messageBox) {
+                                    messageBox.style.color = "red";
+                                    messageBox.innerText = "No task found.";
+                                }
+                            }
+                        } else {
+                            if (messageBox) {
+                                messageBox.style.color = "red";
+                                messageBox.innerText = response.message;
+                            }
+                        }
+                    } catch (e) {
+                        if (messageBox) {
+                            messageBox.style.color = "red";
+                            messageBox.innerText = "Invalid server response.";
+                        }
+                    }
+                } else {
+                    if (messageBox) {
+                        messageBox.style.color = "red";
+                        messageBox.innerText = "Request failed.";
+                    }
+                }
+            };
+
+            xhr.send();
+        }
+
+        projectFilter.addEventListener("change", loadClientTasks);
+        statusFilter.addEventListener("change", loadClientTasks);
+    }
+});
