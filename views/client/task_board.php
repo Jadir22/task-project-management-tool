@@ -30,6 +30,7 @@ $tasks = get_client_visible_tasks($conn, $client_id);
         <a href="dashboard.php">Dashboard</a> |
         <a href="projects.php">My Projects</a> |
         <a href="feedback.php">Feedback</a> |
+         <a href="activity_feed.php">Activity Feed</a> |
         <a href="../profile.php">My Profile</a> |
         <a href="../../logout.php">Logout</a>
     </p>
