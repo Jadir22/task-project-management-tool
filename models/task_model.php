@@ -418,3 +418,47 @@ function update_task_status_by_member($conn, $task_id, $status, $member_id) {
 
     return mysqli_stmt_execute($stmt);
 }
+
+
+function get_client_visible_tasks($conn, $client_id, $project_id = "", $status = "") {
+    $sql = "SELECT 
+                t.*,
+                p.name AS project_name,
+                m.title AS milestone_title,
+                u.name AS assigned_member
+            FROM tasks t
+            LEFT JOIN projects p ON t.project_id = p.id
+            LEFT JOIN milestones m ON t.milestone_id = m.id
+            LEFT JOIN users u ON t.assigned_to = u.id
+            WHERE p.client_id = ?
+            AND p.visibility = 'client_visible'
+            AND p.status != 'archived'";
+
+    $types = "i";
+    $params = [$client_id];
+
+    if ($project_id != "") {
+        $sql .= " AND p.id = ?";
+        $types .= "i";
+        $params[] = $project_id;
+    }
+
+    if ($status != "") {
+        $sql .= " AND t.status = ?";
+        $types .= "s";
+        $params[] = $status;
+    }
+
+    $sql .= " ORDER BY t.due_date ASC";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, $types, ...$params);
+    mysqli_stmt_execute($stmt);
+
+    return mysqli_stmt_get_result($stmt);
+}
