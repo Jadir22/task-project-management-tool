@@ -837,3 +837,38 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    var memberCommentForm = document.getElementById("memberCommentForm");
+
+    if (memberCommentForm) {
+        memberCommentForm.addEventListener("submit", function (e) {
+            var isValid = true;
+
+            var commentBody = document.getElementById("member_comment_body").value.trim();
+            var visibility = document.getElementById("member_comment_visibility").value;
+
+            document.getElementById("memberCommentBodyError").innerText = "";
+            document.getElementById("memberCommentVisibilityError").innerText = "";
+
+            if (commentBody === "") {
+                document.getElementById("memberCommentBodyError").innerText = "Comment is required.";
+                isValid = false;
+            }
+
+            if (visibility === "") {
+                document.getElementById("memberCommentVisibilityError").innerText = "Comment visibility is required.";
+                isValid = false;
+            }
+
+            if (visibility !== "" && visibility !== "0" && visibility !== "1") {
+                document.getElementById("memberCommentVisibilityError").innerText = "Invalid comment visibility.";
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    }
+});
