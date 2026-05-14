@@ -110,7 +110,15 @@ $tasks = get_tasks_by_member($conn, $member_id);
                     </td>
                     <td><?php echo htmlspecialchars($task["title"]); ?></td>
                     <td><?php echo htmlspecialchars($task["priority"]); ?></td>
-                    <td><?php echo htmlspecialchars($task["status"]); ?></td>
+                    <td>
+                            <select class="member-task-status-select" data-task-id="<?php echo $task["id"]; ?>">
+                                  <option value="todo" <?php if ($task["status"] == "todo") echo "selected"; ?>>To Do</option>
+                                  <option value="in_progress" <?php if ($task["status"] == "in_progress") echo "selected"; ?>>In Progress</option>
+                                  <option value="review" <?php if ($task["status"] == "review") echo "selected"; ?>>Review</option>
+                                  <option value="done" <?php if ($task["status"] == "done") echo "selected"; ?>>Done</option>
+                            </select>
+                            <small class="member-task-status-message" id="member-task-status-message-dashboard-<?php echo $task["id"]; ?>"></small>
+                    </td>
                     <td><?php echo htmlspecialchars($task["due_date"]); ?></td>
                     <td><?php echo htmlspecialchars($task["estimated_hours"]); ?></td>
                     <td>
@@ -124,6 +132,6 @@ $tasks = get_tasks_by_member($conn, $member_id);
             </tr>
         <?php endif; ?>
     </table>
-
+    <script src="../../assets/js/ajax.js"></script>
 </body>
 </html>

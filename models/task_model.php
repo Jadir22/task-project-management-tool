@@ -399,4 +399,22 @@ function get_member_task_by_id($conn, $task_id, $member_id) {
     mysqli_stmt_execute($stmt);
 
     $result = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_assoc($result);
+}
+function update_task_status_by_member($conn, $task_id, $status, $member_id) {
+    $sql = "UPDATE tasks 
+            SET status = ?,
+                completed_at = CASE WHEN ? = 'done' THEN NOW() ELSE completed_at END
+            WHERE id = ?
+            AND assigned_to = ?";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "ssii", $status, $status, $task_id, $member_id);
+
+    return mysqli_stmt_execute($stmt);
 }

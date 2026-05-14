@@ -177,3 +177,68 @@ function escapeHtml(text) {
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
 }
+document.addEventListener("DOMContentLoaded", function () {
+    var memberStatusSelects = document.querySelectorAll(".member-task-status-select");
+
+    memberStatusSelects.forEach(function (select) {
+        select.addEventListener("change", function () {
+            var taskId = this.getAttribute("data-task-id");
+            var newStatus = this.value;
+
+            var messageBox = this.parentElement.querySelector(".member-task-status-message");
+
+            if (!messageBox) {
+                messageBox = document.getElementById("member-task-status-message-" + taskId);
+            }
+
+            if (!messageBox) {
+                return;
+            }
+
+            if (taskId === "" || isNaN(taskId)) {
+                messageBox.style.color = "red";
+                messageBox.innerText = "Invalid task selected.";
+                return;
+            }
+
+            var allowedStatuses = ["todo", "in_progress", "review", "done"];
+
+            if (!allowedStatuses.includes(newStatus)) {
+                messageBox.style.color = "red";
+                messageBox.innerText = "Invalid status selected.";
+                return;
+            }
+
+            messageBox.style.color = "black";
+            messageBox.innerText = "Updating...";
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "../../api/member_update_task_status.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+
+                        if (response.success) {
+                            messageBox.style.color = "green";
+                            messageBox.innerText = response.message;
+                        } else {
+                            messageBox.style.color = "red";
+                            messageBox.innerText = response.message;
+                        }
+                    } catch (e) {
+                        messageBox.style.color = "red";
+                        messageBox.innerText = "Invalid server response.";
+                    }
+                } else {
+                    messageBox.style.color = "red";
+                    messageBox.innerText = "Request failed.";
+                }
+            };
+
+            xhr.send("task_id=" + encodeURIComponent(taskId) + "&status=" + encodeURIComponent(newStatus));
+        });
+    });
+});
