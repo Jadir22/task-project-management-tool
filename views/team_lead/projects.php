@@ -79,7 +79,8 @@ $projects = get_projects_by_teamlead($conn, $team_lead_id);
                     <td><?php echo htmlspecialchars($project["color_label"]); ?></td>
                     <td><?php echo $project["created_at"]; ?></td>
                     <td>
-                        <a href="edit_project.php?project_id=<?php echo $project["id"]; ?>">Edit</a>
+                        <a href="edit_project.php?project_id=<?php echo $project["id"]; ?>">Edit</a> |
+                        <a href="project_comments.php?project_id=<?php echo $project["id"]; ?>">Comments</a>
                     
                         <?php if ($project["status"] == "completed"): ?>
                             <form action="../../controllers/project_controller.php" method="POST" class="archive-project-form" style="display:inline;">
