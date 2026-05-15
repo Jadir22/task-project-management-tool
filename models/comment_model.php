@@ -37,3 +37,31 @@ function get_comments_by_task($conn, $task_id) {
 
     return mysqli_stmt_get_result($stmt);
 }
+
+function get_project_comments_by_teamlead($conn, $project_id, $team_lead_id) {
+    $sql = "SELECT 
+                c.*,
+                t.title AS task_title,
+                p.name AS project_name,
+                u.name AS user_name,
+                u.role AS user_role
+            FROM comments c
+            LEFT JOIN tasks t ON c.task_id = t.id
+            LEFT JOIN projects p ON t.project_id = p.id
+            LEFT JOIN workspaces w ON p.workspace_id = w.id
+            LEFT JOIN users u ON c.user_id = u.id
+            WHERE p.id = ?
+            AND w.owner_id = ?
+            ORDER BY c.created_at DESC";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "ii", $project_id, $team_lead_id);
+    mysqli_stmt_execute($stmt);
+
+    return mysqli_stmt_get_result($stmt);
+}
