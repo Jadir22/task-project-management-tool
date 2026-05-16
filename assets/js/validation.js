@@ -905,3 +905,61 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    var attachmentForm = document.getElementById("attachmentForm");
+
+    if (attachmentForm) {
+        attachmentForm.addEventListener("submit", function (e) {
+            var isValid = true;
+
+            var fileInput = document.getElementById("attachment_file");
+            var visibility = document.getElementById("attachment_visibility").value;
+
+            document.getElementById("attachmentFileError").innerText = "";
+            document.getElementById("attachmentVisibilityError").innerText = "";
+
+            if (fileInput.files.length === 0) {
+                document.getElementById("attachmentFileError").innerText = "Attachment file is required.";
+                isValid = false;
+            } else {
+                var file = fileInput.files[0];
+                var fileName = file.name.toLowerCase();
+                var fileSize = file.size;
+
+                var allowedExtensions = [".jpg", ".jpeg", ".png", ".pdf", ".doc", ".docx", ".txt", ".zip"];
+                var validExtension = false;
+
+                for (var i = 0; i < allowedExtensions.length; i++) {
+                    if (fileName.endsWith(allowedExtensions[i])) {
+                        validExtension = true;
+                    }
+                }
+
+                if (!validExtension) {
+                    document.getElementById("attachmentFileError").innerText = "Only JPG, JPEG, PNG, PDF, DOC, DOCX, TXT, and ZIP files are allowed.";
+                    isValid = false;
+                }
+
+                if (fileSize > 10 * 1024 * 1024) {
+                    document.getElementById("attachmentFileError").innerText = "File size must be less than 10MB.";
+                    isValid = false;
+                }
+            }
+
+            if (visibility === "") {
+                document.getElementById("attachmentVisibilityError").innerText = "File visibility is required.";
+                isValid = false;
+            }
+
+            if (visibility !== "" && visibility !== "0" && visibility !== "1") {
+                document.getElementById("attachmentVisibilityError").innerText = "Invalid file visibility.";
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    }
+});
