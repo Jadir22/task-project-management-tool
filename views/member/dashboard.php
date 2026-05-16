@@ -36,6 +36,7 @@ $tasks = get_tasks_by_member($conn, $member_id);
     <p>
         <a href="../profile.php">My Profile</a> |
         <a href="tasks.php">My Tasks</a> |
+        <a href="productivity.php">Productivity Summary</a> |
         <a href="../../logout.php">Logout</a>
     </p>
 

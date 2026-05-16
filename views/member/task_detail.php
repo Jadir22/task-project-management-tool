@@ -47,6 +47,7 @@ $attachments = get_attachments_by_task($conn, $task_id);
     <p>
         <a href="tasks.php">Back to My Tasks</a> |
         <a href="dashboard.php">Dashboard</a> |
+        <a href="productivity.php">Productivity Summary</a> |
         <a href="../../logout.php">Logout</a>
     </p>
     <hr>
