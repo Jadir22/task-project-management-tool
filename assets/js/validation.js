@@ -872,3 +872,36 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    var timeLogForm = document.getElementById("timeLogForm");
+
+    if (timeLogForm) {
+        timeLogForm.addEventListener("submit", function (e) {
+            var isValid = true;
+
+            var hours = document.getElementById("time_log_hours").value.trim();
+            var note = document.getElementById("time_log_note").value.trim();
+
+            document.getElementById("timeLogHoursError").innerText = "";
+            document.getElementById("timeLogNoteError").innerText = "";
+
+            if (hours === "") {
+                document.getElementById("timeLogHoursError").innerText = "Hours worked is required.";
+                isValid = false;
+            } else if (isNaN(hours) || Number(hours) <= 0) {
+                document.getElementById("timeLogHoursError").innerText = "Hours worked must be a positive number.";
+                isValid = false;
+            }
+
+            if (note === "") {
+                document.getElementById("timeLogNoteError").innerText = "Note is required.";
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    }
+});
