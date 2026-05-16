@@ -9,6 +9,7 @@ include "../../config/db.php";
 include "../../models/task_model.php";
 include "../../models/comment_model.php";
 include "../../models/time_log_model.php";
+include "../../models/attachment_model.php";
 
 $member_id = $_SESSION["user_id"];
 $task_id = $_GET["task_id"] ?? "";
@@ -30,6 +31,7 @@ if (!$task) {
 $comments = get_comments_by_task($conn, $task_id);
 $time_logs = get_time_logs_by_task_and_member($conn, $task_id, $member_id);
 $total_logged_hours = get_total_hours_by_task_and_member($conn, $task_id, $member_id);
+$attachments = get_attachments_by_task($conn, $task_id);
 
 
 ?>
@@ -105,7 +107,7 @@ $total_logged_hours = get_total_hours_by_task_and_member($conn, $task_id, $membe
     }
     ?>
 
-        <hr>
+
 
     <?php
     if (isset($_SESSION["errors"])) {
@@ -181,6 +183,81 @@ $total_logged_hours = get_total_hours_by_task_and_member($conn, $task_id, $membe
         <?php else: ?>
             <tr>
                 <td colspan="5">No time log found for this task.</td>
+            </tr>
+        <?php endif; ?>
+    </table>
+
+        <hr>
+
+    <h2>Upload Attachment</h2>
+
+    <form id="attachmentForm" action="../../controllers/attachment_controller.php" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="upload_attachment">
+        <input type="hidden" name="task_id" value="<?php echo $task["id"]; ?>">
+
+        <div>
+            <label>Attachment File</label><br>
+            <input type="file" name="attachment_file" id="attachment_file">
+            <small id="attachmentFileError"></small>
+        </div>
+
+        <br>
+
+        <div>
+            <label>File Visibility</label><br>
+            <select name="is_client_visible" id="attachment_visibility">
+                <option value="">Select Visibility</option>
+                <option value="0">Internal Only</option>
+                <option value="1">Client Visible</option>
+            </select>
+            <small id="attachmentVisibilityError"></small>
+        </div>
+
+        <br>
+
+        <button type="submit">Upload Attachment</button>
+    </form>
+
+    <hr>
+
+    <h2>Task Attachments</h2>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>ID</th>
+            <th>File Name</th>
+            <th>Size</th>
+            <th>Visibility</th>
+            <th>Uploaded By</th>
+            <th>Uploaded At</th>
+            <th>View</th>
+        </tr>
+
+        <?php if ($attachments && mysqli_num_rows($attachments) > 0): ?>
+            <?php while ($attachment = mysqli_fetch_assoc($attachments)): ?>
+                <tr>
+                    <td><?php echo $attachment["id"]; ?></td>
+                    <td><?php echo htmlspecialchars($attachment["file_name"]); ?></td>
+                    <td><?php echo round($attachment["file_size"] / 1024, 2); ?> KB</td>
+                    <td>
+                        <?php
+                        if ($attachment["is_client_visible"] == 1) {
+                            echo "Client Visible";
+                        } else {
+                            echo "Internal Only";
+                        }
+                        ?>
+                    </td>
+                    <td><?php echo htmlspecialchars($attachment["uploaded_by_name"] ?? "Unknown"); ?></td>
+                    <td><?php echo htmlspecialchars($attachment["uploaded_at"]); ?></td>
+                    <td>
+                        <a href="../../<?php echo htmlspecialchars($attachment["file_path"]); ?>" target="_blank">Open</a>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="8">No attachment found for this task.</td>
             </tr>
         <?php endif; ?>
     </table>
