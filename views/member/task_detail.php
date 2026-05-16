@@ -8,6 +8,7 @@ check_role(["member"]);
 include "../../config/db.php";
 include "../../models/task_model.php";
 include "../../models/comment_model.php";
+include "../../models/time_log_model.php";
 
 $member_id = $_SESSION["user_id"];
 $task_id = $_GET["task_id"] ?? "";
@@ -27,6 +28,9 @@ if (!$task) {
 }
 
 $comments = get_comments_by_task($conn, $task_id);
+$time_logs = get_time_logs_by_task_and_member($conn, $task_id, $member_id);
+$total_logged_hours = get_total_hours_by_task_and_member($conn, $task_id, $member_id);
+
 
 ?>
 <!DOCTYPE html>
@@ -100,6 +104,86 @@ $comments = get_comments_by_task($conn, $task_id);
         unset($_SESSION["success"]);
     }
     ?>
+
+        <hr>
+
+    <?php
+    if (isset($_SESSION["errors"])) {
+        echo "<div style='color:red;'>";
+        foreach ($_SESSION["errors"] as $error) {
+            echo "<p>" . htmlspecialchars($error) . "</p>";
+        }
+        echo "</div>";
+        unset($_SESSION["errors"]);
+    }
+
+    if (isset($_SESSION["success"])) {
+        echo "<div style='color:green;'>";
+        echo "<p>" . htmlspecialchars($_SESSION["success"]) . "</p>";
+        echo "</div>";
+        unset($_SESSION["success"]);
+    }
+    ?>
+
+    <h2>Log Work Hours</h2>
+
+    <p>
+        <strong>Total Hours You Logged On This Task:</strong>
+        <?php echo $total_logged_hours; ?> hour(s)
+    </p>
+
+    <form id="timeLogForm" action="../../controllers/time_log_controller.php" method="POST">
+        <input type="hidden" name="action" value="add_time_log">
+        <input type="hidden" name="task_id" value="<?php echo $task["id"]; ?>">
+
+        <div>
+            <label>Hours Worked</label><br>
+            <input type="text" name="hours_logged" id="time_log_hours" placeholder="Example: 2.5">
+            <small id="timeLogHoursError"></small>
+        </div>
+
+        <br>
+
+        <div>
+            <label>Note</label><br>
+            <textarea name="note" id="time_log_note" placeholder="Write what you worked on"></textarea>
+            <small id="timeLogNoteError"></small>
+        </div>
+
+        <br>
+
+        <button type="submit">Add Time Log</button>
+    </form>
+
+    <hr>
+
+    <h2>My Time Logs</h2>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>ID</th>
+            <th>Member</th>
+            <th>Hours</th>
+            <th>Note</th>
+            <th>Logged At</th>
+        </tr>
+
+        <?php if ($time_logs && mysqli_num_rows($time_logs) > 0): ?>
+            <?php while ($log = mysqli_fetch_assoc($time_logs)): ?>
+                <tr>
+                    <td><?php echo $log["id"]; ?></td>
+                    <td><?php echo htmlspecialchars($log["member_name"]); ?></td>
+                    <td><?php echo htmlspecialchars($log["hours_logged"]); ?></td>
+                    <td><?php echo htmlspecialchars($log["note"]); ?></td>
+                    <td><?php echo htmlspecialchars($log["logged_at"]); ?></td>
+                </tr>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="5">No time log found for this task.</td>
+            </tr>
+        <?php endif; ?>
+    </table>
 
     <h2>Add Comment</h2>
 
