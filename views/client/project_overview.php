@@ -45,6 +45,7 @@ $milestones = get_client_visible_milestones($conn, $project_id, $client_id);
         <a href="task_board.php">Task Board</a> |
         <a href="feedback.php">Feedback</a> |
          <a href="activity_feed.php">Activity Feed</a> |
+          <a href="comments_files.php">Comments & Files</a> |
         <a href="dashboard.php">Dashboard</a> |
         <a href="../../logout.php">Logout</a>
     </p>

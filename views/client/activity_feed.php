@@ -30,6 +30,7 @@ $activities = get_client_activity_feed($conn, $client_id);
         <a href="projects.php">My Projects</a> |
         <a href="task_board.php">Task Board</a> |
         <a href="feedback.php">Feedback</a> |
+         <a href="comments_files.php">Comments & Files</a> |
         <a href="../profile.php">My Profile</a> |
         <a href="../../logout.php">Logout</a>
     </p>
