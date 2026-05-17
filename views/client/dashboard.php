@@ -36,6 +36,7 @@ $projects = get_projects_by_client($conn, $client_id);
         <a href="task_board.php">Task Board</a> |
         <a href="feedback.php">Feedback</a> |
          <a href="activity_feed.php">Activity Feed</a> |
+          <a href="comments_files.php">Comments & Files</a> |
         <a href="../profile.php">My Profile</a> |
         <a href="../../logout.php">Logout</a>
     </p>
